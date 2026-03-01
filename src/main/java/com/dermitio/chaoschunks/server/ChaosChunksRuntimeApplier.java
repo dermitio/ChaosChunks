@@ -310,12 +310,12 @@ private static HolderSet<Biome> parseBiomeSelection(Registry<Biome> registry, St
         } catch (Throwable ignored) {}
     }
 
-    if (!deny.isEmpty()) {
-        pool.removeIf(h -> {
-            var k = h.unwrapKey();
-            return k.isPresent() && deny.contains(ChaosBiomeParsing.stableId(k.get()));
-        });
-    }
+if (!deny.isEmpty()) {
+    pool.removeIf(h -> {
+        var k = h.unwrapKey();
+        return k.isPresent() && deny.contains(ChaosBiomeParsing.stableId(k.get()));
+    });
+}
 
     // ---------- REMOVE "DECORATION-UNSAFE" BIOMES ----------
     // Vanilla assumes every biome has a features() list sized at least Decoration.values().length.
@@ -324,32 +324,23 @@ private static HolderSet<Biome> parseBiomeSelection(Registry<Biome> registry, St
     pool.removeIf(h -> {
         try {
             var feats = h.value().getGenerationSettings().features();
-            return feats == null || feats.size() < expectedSteps;
+            return feats == null;
         } catch (Throwable t) {
             return false;
         }
     });
 
-    // ---------- EMPTY → ALL (then re-apply deny + safety filter) ----------
-    if (pool.isEmpty()) {
-        registry.stream().forEach(b -> pool.add(registry.wrapAsHolder(b)));
+// ---------- EMPTY → ALL (then re-apply deny) ----------
+if (pool.isEmpty()) {
+    registry.stream().forEach(b -> pool.add(registry.wrapAsHolder(b)));
 
-        if (!deny.isEmpty()) {
-            pool.removeIf(h -> {
-                var k = h.unwrapKey();
-                return k.isPresent() && deny.contains(ChaosBiomeParsing.stableId(k.get()));
-            });
-        }
-
+    if (!deny.isEmpty()) {
         pool.removeIf(h -> {
-            try {
-                var feats = h.value().getGenerationSettings().features();
-                return feats == null || feats.size() < expectedSteps;
-            } catch (Throwable t) {
-                return false;
-            }
+            var k = h.unwrapKey();
+            return k.isPresent() && deny.contains(ChaosBiomeParsing.stableId(k.get()));
         });
     }
+}
 
     return HolderSet.direct(new java.util.ArrayList<>(pool));
 }

@@ -51,7 +51,9 @@ Requires:
 
 Format:
 
+```
 [positive biome tags],[positive biome ids],[negative biome ids],[negative biome tags]
+```
 
 Explanation:
 - First: biome tags to include
@@ -60,7 +62,11 @@ Explanation:
 - Fourth: biome tags to exclude
 
 *Example:*
+
+```
 ### the_nether = [#minecraft:is_overworld],[minecraft:the_void],[minecraft:swamp,minecraft:river],[#minecraft:is_forest]
+```
+
 * This will create the nether with only regular overworld biomes without the forests, swamp and river biomes and the void biome added in
 
 ---
@@ -71,6 +77,7 @@ Explanation:
 * Loader: **NeoForge**
 * Works in singleplayer and servers 
 * Server-side only — clients can join without installing the mod
+
 Known issues:
 
 * Biomes without features are usually handled, but edge cases may still occur

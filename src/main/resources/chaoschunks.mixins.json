@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "com.dermitio.chaoschunks.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "NoiseBasedChunkGeneratorAccessor",
+    "ChunkStatusTasksMixin",
+    "ChunkGeneratorMixin",
+    "FeatureSorterMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

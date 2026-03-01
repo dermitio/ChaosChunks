@@ -1,0 +1,29 @@
+modLoader="javafml"
+loaderVersion="[1,)"
+license="MIT"
+
+[[mixins]]
+config="chaoschunks.mixins.json"
+
+[[mods]]
+modId="chaoschunks"
+version="0.1"
+displayName="ChaosChunks"
+logoFile="logo.png"
+credits="Dermitio"
+authors="Dermitio"
+description="Randomize your chunks to your hearts content!"
+
+[[dependencies.chaoschunks]]
+    modId="neoforge" 
+    type="required" 
+    versionRange="[21.11,)" 
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.chaoschunks]]
+    modId="minecraft"
+    type="required"
+    versionRange="[1.21.11,1.22)"
+    ordering="NONE"
+    side="BOTH"

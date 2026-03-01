@@ -1,0 +1,7 @@
+
+example:
+
+"#minecraft:is_overworld","minecraft:plains,minecraft:desert","minecraft:basalt_deltas","#minecraft:is_nether"
+
+// "#minecraft:is_overworld","minecraft:plains,minecraft:desert" // these are added in
+// "minecraft:basalt_deltas","#minecraft:is_nether" // these are blacklisted

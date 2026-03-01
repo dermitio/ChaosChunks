@@ -1,0 +1,26 @@
+# Gradle
+.gradle/
+build/
+out/
+
+# Run environment
+run/
+logs/
+
+# IDE files
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# JVM crashes
+hs_err_pid*
+
+# Local test exports or temp notes
+*.log
+*.tmp
+*.jar

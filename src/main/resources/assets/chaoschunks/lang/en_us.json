@@ -1,0 +1,11 @@
+{
+  "worldpreset.chaoschunks.chaos_chunks": "Chaos Chunks",
+  "generator.chaoschunks.chaos_chunks": "Chaos Chunks",
+  "chaoschunks.preset.title": "Chaos Chunks Settings",
+  "chaoschunks.preset.region_x": "Region size X (chunks)",
+  "chaoschunks.preset.region_z": "Region size Z (chunks)",
+  "chaoschunks.preset.biomes": "Allowed biomes (one per line; blank = ALL; prefix '-' to blacklist; prefix '#' for biome tag)",
+
+  "gui.done": "Done",
+  "gui.cancel": "Cancel"
+}

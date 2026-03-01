@@ -18,7 +18,8 @@ Custom world generation mod for Minecraft (NeoForge).
 
 1. Install **Minecraft 1.21.11**
 2. Install the latest **NeoForge**
-3. Download the latest ChaosChunks.jar
+3. Download the latest ChaosChunks.jar from Curseforge
+- https://www.curseforge.com/minecraft/mc-mods/chaoschunks
 4. Place it in your `mods/` folder
 
 ---

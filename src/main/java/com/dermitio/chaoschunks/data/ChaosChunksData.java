@@ -11,29 +11,24 @@ import java.util.Map;
 
 public class ChaosChunksData extends SavedData {
 
-    // ** Defines the storage ID used to save and load ChaosChunks world data **
     public static final String ID = "chaoschunks";
 
-    // ** Stores global region size configuration for chaos generation **
+    // ChaosChunks worlds should be patched
+    public boolean enabled = false;
+
     public int regionX = 1;
     public int regionZ = 1;
-
-    // ** Stores the global biome list applied when no dimension-specific override exists **
     public String globalBiomes = "";
 
-    // ** Stores per-dimension biome lists keyed by dimension ID **
     public final Map<String, String> dimensionBiomes = new HashMap<>();
-
-    // ** Stores per-dimension generation modes keyed by dimension ID **
     public final Map<String, String> dimensionModes = new HashMap<>();
 
-    // ** Default constructor used when creating fresh saved data **
     public ChaosChunksData() {}
 
-    // ** Constructor used by the codec to rebuild saved data from disk **
-    private ChaosChunksData(int rx, int rz, String global,
+    private ChaosChunksData(boolean enabled, int rx, int rz, String global,
                             Map<String, String> biomes,
                             Map<String, String> modes) {
+        this.enabled = enabled;
         this.regionX = rx;
         this.regionZ = rz;
         this.globalBiomes = (global == null) ? "" : global;
@@ -41,8 +36,8 @@ public class ChaosChunksData extends SavedData {
         this.dimensionModes.putAll(modes);
     }
 
-    // ** Codec defining how ChaosChunks data is serialized and deserialized **
     public static final Codec<ChaosChunksData> CODEC = RecordCodecBuilder.create(inst -> inst.group(
+            Codec.BOOL.optionalFieldOf("enabled", false).forGetter(d -> d.enabled),
             Codec.INT.optionalFieldOf("rx", 1).forGetter(d -> d.regionX),
             Codec.INT.optionalFieldOf("rz", 1).forGetter(d -> d.regionZ),
             Codec.STRING.optionalFieldOf("global", "").forGetter(d -> d.globalBiomes),
@@ -54,11 +49,9 @@ public class ChaosChunksData extends SavedData {
                     .forGetter(d -> d.dimensionModes)
     ).apply(inst, ChaosChunksData::new));
 
-    // ** Declares the SavedData type so Minecraft can manage persistence automatically **
     public static final SavedDataType<ChaosChunksData> TYPE =
             new SavedDataType<>(ID, ChaosChunksData::new, CODEC);
 
-    // ** Retrieves or creates the ChaosChunks data instance from dimension storage **
     public static ChaosChunksData get(DimensionDataStorage storage) {
         return storage.computeIfAbsent(TYPE);
     }

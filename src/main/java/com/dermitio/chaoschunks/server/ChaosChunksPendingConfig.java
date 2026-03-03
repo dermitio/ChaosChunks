@@ -40,4 +40,7 @@ public static Pending peek() {
         pending = null;
         return p;
     }
+    public static void clear() {
+    pending = null;
+}
 }

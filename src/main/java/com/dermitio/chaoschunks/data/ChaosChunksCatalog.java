@@ -5,7 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.biome.Biome;
@@ -183,8 +183,8 @@ public final class ChaosChunksCatalog {
             Path path = filePath();
             Files.createDirectories(path.getParent());
 
-            Registry<LevelStem> stems = server.registryAccess().lookupOrThrow(Registries.LEVEL_STEM);
-            Registry<Biome> biomes = server.registryAccess().lookupOrThrow(Registries.BIOME);
+            Registry<LevelStem> stems = server.registryAccess().registryOrThrow(Registries.LEVEL_STEM);
+            Registry<Biome> biomes = server.registryAccess().registryOrThrow(Registries.BIOME);
 
             List<String> dimIds = stems.keySet().stream()
                     .map(ChaosChunksCatalog::stableId)
@@ -237,8 +237,8 @@ public final class ChaosChunksCatalog {
         Catalog c = read();
         List<ResourceKey<LevelStem>> out = new ArrayList<>();
         for (String s : c.dims()) {
-            Identifier id = Identifier.tryParse(s);
-            if (id != null) out.add(ResourceKey.create(Registries.LEVEL_STEM, id));
+            ResourceLocation id = ResourceLocation.tryParse(s);
+if (id != null) out.add(ResourceKey.create(Registries.LEVEL_STEM, id));
         }
         return out;
     }

@@ -3,12 +3,14 @@ package com.dermitio.chaoschunks;
 import com.dermitio.chaoschunks.client.ChaosChunksClient;
 import com.dermitio.chaoschunks.worldgen.ChaosWorldgen;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.levelgen.presets.WorldPreset;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import com.dermitio.chaoschunks.server.ChaosChunksServer;
+import com.dermitio.chaoschunks.server.ChaosChunksNotices;
+import com.dermitio.chaoschunks.server.ChaosChunksNoticeRules;
 
 @Mod(ChaosChunks.MODID)
 public class ChaosChunks {
@@ -20,7 +22,7 @@ public class ChaosChunks {
     public static final ResourceKey<WorldPreset> CHAOS_PRESET_KEY =
             ResourceKey.create(
                     Registries.WORLD_PRESET,
-                    Identifier.parse(MODID + ":chaos_chunks")
+                    ResourceLocation.parse(MODID + ":chaos_chunks")
             );
 
     // ** Initializes the mod, registers worldgen, client UI hooks, runtime events, and server logic **
@@ -36,6 +38,8 @@ public class ChaosChunks {
         );
 
         com.dermitio.chaoschunks.client.ChaosChunksCatalogClient.init(modBus);
+        ChaosChunksNoticeRules.registerAll();
+        ChaosChunksNotices.init();
         ChaosChunksServer.init();
     }
 }

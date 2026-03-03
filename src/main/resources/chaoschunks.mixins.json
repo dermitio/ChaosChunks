@@ -5,6 +5,7 @@
   "mixins": [
     "NoiseBasedChunkGeneratorAccessor",
     "ChunkStatusTasksMixin",
+    "WorldCreationUiStateMixin",
     "ChunkGeneratorMixin",
     "FeatureSorterMixin"
   ],

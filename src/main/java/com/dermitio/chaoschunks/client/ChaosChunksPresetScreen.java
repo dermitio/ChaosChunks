@@ -12,7 +12,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.tags.TagKey;
@@ -434,6 +434,7 @@ private static String stableId(ResourceKey<?> key) {
 
     // ** Applies UI settings to pending config and persists them if a server is active **
 private void applySettings() {
+    System.out.println("[ChaosChunks] applySettings() called");
     int rx = parseClamped(regionXBox.getValue(), 1, 512, 1);
     int rz = parseClamped(regionZBox.getValue(), 1, 512, 1);
 
@@ -456,6 +457,8 @@ private void applySettings() {
     if (server != null) {
         var storage = server.overworld().getDataStorage();
         var data = com.dermitio.chaoschunks.data.ChaosChunksData.get(storage);
+        
+        data.enabled = true;
 
         data.regionX = rx;
         data.regionZ = rz;
@@ -493,7 +496,7 @@ private static HolderSet<Biome> parseBiomeSelection(HolderLookup.RegistryLookup<
 
         // include tags
         for (String tagStr : spec.includeTagIds()) {
-            Identifier tagId = Identifier.tryParse(tagStr);
+            ResourceLocation tagId = ResourceLocation.tryParse(tagStr);
             if (tagId == null) continue;
             try {
                 HolderSet<Biome> set = biomeLookup.getOrThrow(TagKey.create(Registries.BIOME, tagId));
@@ -503,7 +506,7 @@ private static HolderSet<Biome> parseBiomeSelection(HolderLookup.RegistryLookup<
 
         // include ids
         for (String idStr : spec.includeIds()) {
-            Identifier id = Identifier.tryParse(idStr);
+            ResourceLocation id = ResourceLocation.tryParse(idStr);
             if (id == null) continue;
             ResourceKey<Biome> key = ResourceKey.create(Registries.BIOME, id);
             biomeLookup.get(key).ifPresent(h -> pool.add((Holder<Biome>) h));
@@ -514,7 +517,7 @@ private static HolderSet<Biome> parseBiomeSelection(HolderLookup.RegistryLookup<
     java.util.HashSet<String> deny = new java.util.HashSet<>(spec.blacklistIds());
 
     for (String tagStr : spec.blacklistTagIds()) {
-        Identifier tagId = Identifier.tryParse(tagStr);
+        ResourceLocation tagId = ResourceLocation.tryParse(tagStr);
         if (tagId == null) continue;
         try {
             HolderSet<Biome> set = biomeLookup.getOrThrow(TagKey.create(Registries.BIOME, tagId));

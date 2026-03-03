@@ -1,21 +1,17 @@
 package com.dermitio.chaoschunks.data;
 
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.saveddata.SavedData;
-import net.minecraft.world.level.saveddata.SavedDataType;
 import net.minecraft.world.level.storage.DimensionDataStorage;
-
-import java.util.HashMap;
 import java.util.Map;
+import java.util.HashMap;
 
 public class ChaosChunksData extends SavedData {
 
     public static final String ID = "chaoschunks";
 
-    // ChaosChunks worlds should be patched
     public boolean enabled = false;
-
     public int regionX = 1;
     public int regionZ = 1;
     public String globalBiomes = "";
@@ -25,34 +21,52 @@ public class ChaosChunksData extends SavedData {
 
     public ChaosChunksData() {}
 
-    private ChaosChunksData(boolean enabled, int rx, int rz, String global,
-                            Map<String, String> biomes,
-                            Map<String, String> modes) {
-        this.enabled = enabled;
-        this.regionX = rx;
-        this.regionZ = rz;
-        this.globalBiomes = (global == null) ? "" : global;
-        this.dimensionBiomes.putAll(biomes);
-        this.dimensionModes.putAll(modes);
+    public static ChaosChunksData load(CompoundTag tag, HolderLookup.Provider provider) {
+        ChaosChunksData data = new ChaosChunksData();
+
+        data.enabled = tag.getBoolean("enabled");
+        data.regionX = tag.getInt("rx");
+        data.regionZ = tag.getInt("rz");
+        data.globalBiomes = tag.getString("global");
+
+        CompoundTag biomesTag = tag.getCompound("dimBiomes");
+        for (String key : biomesTag.getAllKeys()) {
+            data.dimensionBiomes.put(key, biomesTag.getString(key));
+        }
+
+        CompoundTag modesTag = tag.getCompound("dimModes");
+        for (String key : modesTag.getAllKeys()) {
+            data.dimensionModes.put(key, modesTag.getString(key));
+        }
+
+        return data;
     }
 
-    public static final Codec<ChaosChunksData> CODEC = RecordCodecBuilder.create(inst -> inst.group(
-            Codec.BOOL.optionalFieldOf("enabled", false).forGetter(d -> d.enabled),
-            Codec.INT.optionalFieldOf("rx", 1).forGetter(d -> d.regionX),
-            Codec.INT.optionalFieldOf("rz", 1).forGetter(d -> d.regionZ),
-            Codec.STRING.optionalFieldOf("global", "").forGetter(d -> d.globalBiomes),
-            Codec.unboundedMap(Codec.STRING, Codec.STRING)
-                    .optionalFieldOf("dimBiomes", Map.of())
-                    .forGetter(d -> d.dimensionBiomes),
-            Codec.unboundedMap(Codec.STRING, Codec.STRING)
-                    .optionalFieldOf("dimModes", Map.of())
-                    .forGetter(d -> d.dimensionModes)
-    ).apply(inst, ChaosChunksData::new));
+    @Override
+    public CompoundTag save(CompoundTag tag, HolderLookup.Provider provider) {
+        tag.putBoolean("enabled", enabled);
+        tag.putInt("rx", regionX);
+        tag.putInt("rz", regionZ);
+        tag.putString("global", globalBiomes);
 
-    public static final SavedDataType<ChaosChunksData> TYPE =
-            new SavedDataType<>(ID, ChaosChunksData::new, CODEC);
+        CompoundTag biomesTag = new CompoundTag();
+        dimensionBiomes.forEach(biomesTag::putString);
+        tag.put("dimBiomes", biomesTag);
 
-    public static ChaosChunksData get(DimensionDataStorage storage) {
-        return storage.computeIfAbsent(TYPE);
+        CompoundTag modesTag = new CompoundTag();
+        dimensionModes.forEach(modesTag::putString);
+        tag.put("dimModes", modesTag);
+
+        return tag;
     }
+
+   public static ChaosChunksData get(DimensionDataStorage storage) {
+    return storage.computeIfAbsent(
+            new SavedData.Factory<>(
+                    ChaosChunksData::new,
+                    ChaosChunksData::load
+            ),
+            ID
+    );
+}
 }

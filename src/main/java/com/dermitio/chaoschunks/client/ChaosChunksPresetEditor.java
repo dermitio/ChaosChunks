@@ -7,7 +7,7 @@ import net.minecraft.client.gui.screens.worldselection.CreateWorldScreen;
 import net.minecraft.client.gui.screens.worldselection.PresetEditor;
 import net.minecraft.client.gui.screens.worldselection.WorldCreationContext;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 
 public final class ChaosChunksPresetEditor implements PresetEditor {
@@ -24,7 +24,7 @@ public final class ChaosChunksPresetEditor implements PresetEditor {
 
             var normalKey = ResourceKey.create(
                     Registries.WORLD_PRESET,
-                    ResourceLocation.parse("minecraft:normal")
+                    Identifier.parse("minecraft:normal")
             );
 
             var normalPreset = presets.getOrThrow(normalKey).value();

@@ -12,7 +12,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.tags.TagKey;
@@ -496,7 +496,7 @@ private static HolderSet<Biome> parseBiomeSelection(HolderLookup.RegistryLookup<
 
         // include tags
         for (String tagStr : spec.includeTagIds()) {
-            ResourceLocation tagId = ResourceLocation.tryParse(tagStr);
+            Identifier tagId = Identifier.tryParse(tagStr);
             if (tagId == null) continue;
             try {
                 HolderSet<Biome> set = biomeLookup.getOrThrow(TagKey.create(Registries.BIOME, tagId));
@@ -506,7 +506,7 @@ private static HolderSet<Biome> parseBiomeSelection(HolderLookup.RegistryLookup<
 
         // include ids
         for (String idStr : spec.includeIds()) {
-            ResourceLocation id = ResourceLocation.tryParse(idStr);
+            Identifier id = Identifier.tryParse(idStr);
             if (id == null) continue;
             ResourceKey<Biome> key = ResourceKey.create(Registries.BIOME, id);
             biomeLookup.get(key).ifPresent(h -> pool.add((Holder<Biome>) h));
@@ -517,7 +517,7 @@ private static HolderSet<Biome> parseBiomeSelection(HolderLookup.RegistryLookup<
     java.util.HashSet<String> deny = new java.util.HashSet<>(spec.blacklistIds());
 
     for (String tagStr : spec.blacklistTagIds()) {
-        ResourceLocation tagId = ResourceLocation.tryParse(tagStr);
+        Identifier tagId = Identifier.tryParse(tagStr);
         if (tagId == null) continue;
         try {
             HolderSet<Biome> set = biomeLookup.getOrThrow(TagKey.create(Registries.BIOME, tagId));

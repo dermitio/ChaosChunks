@@ -8,7 +8,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -178,7 +178,7 @@ private static void applyToLevel(MinecraftServer server, ServerLevel level) {
     String prev = APPLIED_SIGNATURE.put(key, sig);
     if (sig.equals(prev)) return;
 
-    Registry<Biome> biomeReg = server.registryAccess().registryOrThrow(Registries.BIOME);
+    Registry<Biome> biomeReg = server.registryAccess().lookupOrThrow(Registries.BIOME);
 
     // ** Determines biome selection pool used for chaos generation **
     HolderSet<Biome> allowed;
@@ -305,25 +305,19 @@ private static HolderSet<Biome> parseBiomeSelection(Registry<Biome> registry, St
 
         // include tags
         for (String tagStr : spec.includeTagIds()) {
-            ResourceLocation tagId = ResourceLocation.tryParse(tagStr);
+            Identifier tagId = Identifier.tryParse(tagStr);
             if (tagId == null) continue;
-
             try {
-                registry.getTag(TagKey.create(Registries.BIOME, tagId))
-                        .ifPresent(tagSet -> tagSet.forEach(pool::add));
+                HolderSet<Biome> set = registry.getOrThrow(TagKey.create(Registries.BIOME, tagId));
+                set.forEach(pool::add);
             } catch (Throwable ignored) {}
         }
 
         // include ids
         for (String idStr : spec.includeIds()) {
-            ResourceLocation id = ResourceLocation.tryParse(idStr);
+            Identifier id = Identifier.tryParse(idStr);
             if (id == null) continue;
-
-            var key = ResourceKey.create(Registries.BIOME, id);
-            Biome biome = registry.get(key);
-            if (biome != null) {
-                pool.add(registry.wrapAsHolder(biome));
-            }
+            registry.get(ResourceKey.create(Registries.BIOME, id)).ifPresent(pool::add);
         }
     }
 
@@ -331,19 +325,40 @@ private static HolderSet<Biome> parseBiomeSelection(Registry<Biome> registry, St
     java.util.HashSet<String> deny = new java.util.HashSet<>(spec.blacklistIds());
 
     for (String tagStr : spec.blacklistTagIds()) {
-        ResourceLocation tagId = ResourceLocation.tryParse(tagStr);
+        Identifier tagId = Identifier.tryParse(tagStr);
         if (tagId == null) continue;
-
         try {
-            registry.getTag(TagKey.create(Registries.BIOME, tagId))
-                    .ifPresent(tagSet -> tagSet.forEach(h -> {
-                        var k = h.unwrapKey();
-                        if (k.isPresent()) {
-                            deny.add(ChaosBiomeParsing.stableId(k.get()));
-                        }
-                    }));
+            HolderSet<Biome> set = registry.getOrThrow(TagKey.create(Registries.BIOME, tagId));
+            set.forEach(h -> {
+                var k = h.unwrapKey();
+                if (k.isPresent()) deny.add(ChaosBiomeParsing.stableId(k.get()));
+            });
         } catch (Throwable ignored) {}
     }
+
+if (!deny.isEmpty()) {
+    pool.removeIf(h -> {
+        var k = h.unwrapKey();
+        return k.isPresent() && deny.contains(ChaosBiomeParsing.stableId(k.get()));
+    });
+}
+
+    // ---------- REMOVE "DECORATION-UNSAFE" BIOMES ----------
+    // Vanilla assumes every biome has a features() list sized at least Decoration.values().length.
+    final int expectedSteps = net.minecraft.world.level.levelgen.GenerationStep.Decoration.values().length;
+
+    pool.removeIf(h -> {
+        try {
+            var feats = h.value().getGenerationSettings().features();
+            return feats == null;
+        } catch (Throwable t) {
+            return false;
+        }
+    });
+
+// ---------- EMPTY → ALL (then re-apply deny) ----------
+if (pool.isEmpty()) {
+    registry.stream().forEach(b -> pool.add(registry.wrapAsHolder(b)));
 
     if (!deny.isEmpty()) {
         pool.removeIf(h -> {
@@ -351,27 +366,7 @@ private static HolderSet<Biome> parseBiomeSelection(Registry<Biome> registry, St
             return k.isPresent() && deny.contains(ChaosBiomeParsing.stableId(k.get()));
         });
     }
-
-    // ---------- BASIC SANITY FILTER ----------
-    pool.removeIf(h -> {
-        try {
-            return h.value().getGenerationSettings().features() == null;
-        } catch (Throwable t) {
-            return false;
-        }
-    });
-
-    // ---------- EMPTY → ALL (then re-apply deny) ----------
-    if (pool.isEmpty()) {
-        registry.stream().forEach(b -> pool.add(registry.wrapAsHolder(b)));
-
-        if (!deny.isEmpty()) {
-            pool.removeIf(h -> {
-                var k = h.unwrapKey();
-                return k.isPresent() && deny.contains(ChaosBiomeParsing.stableId(k.get()));
-            });
-        }
-    }
+}
 
     return HolderSet.direct(new java.util.ArrayList<>(pool));
 }

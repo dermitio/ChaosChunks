@@ -87,8 +87,27 @@ Known issues:
 
 ## License
 
-This project is licensed under the **MIT License**.
-See the `LICENSE` file for details.
+**Code:**
+The source code of this project is licensed under the **MIT License**.
+
+**Assets:**
+Textures, sounds, music, models, and other bundled non-code assets are
+Copyright © 2026 Dermitio.
+All rights reserved.
+
+These assets are not licensed under the MIT License and may not be copied, redistributed, modified, or used in other projects without explicit permission from the author, unless otherwise stated.
+
+**Exception**
+The sound file void_unreal.ogg is licensed under the MIT License.
+
+**License change notice**
+
+Starting with releases **chaoschunks-0.2.H3.F2-1.21.11-T** and **chaoschunks-0.2.H3.F2-1.21.1-T2**, dated **7 March 2026**, this project uses a split license:
+
+- **Source code:** MIT License 
+- **Assets:** All Rights Reserved
+
+Earlier releases may have different licensing.
 
 ---
 

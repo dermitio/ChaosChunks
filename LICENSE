@@ -1,0 +1,37 @@
+MIT License
+
+Copyright (c) 2026 Dermitio
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software...
+
+MIT License
+
+The MIT License is a widely used open-source software license that grants broad permission for reuse with minimal conditions. It allows developers to freely use, copy, modify, and distribute software, provided the original copyright and license notice are retained. Its simplicity and permissiveness have made it one of the most popular licenses globally.
+Key facts
+
+    Type: Permissive open-source license
+
+    Origin: Massachusetts Institute of Technology
+
+    SPDX identifier: MIT
+
+    OSI approved: Yes
+
+    Primary condition: Must include copyright and license notice
+
+Core principles
+
+The MIT License’s defining feature is its permissiveness. It imposes virtually no restrictions on how the software can be used—commercially or privately—as long as attribution is preserved. The text grants rights “to deal in the Software without restriction,” encompassing use, modification, distribution, sublicensing, and sale, while disclaiming all warranties and liability.
+Comparison and variants
+
+The license is considered functionally equivalent to the BSD 3-Clause License and similar permissive licenses, but is shorter and simpler. A variant, MIT-0, removes the requirement to include the copyright notice, offering even fewer obligations.
+Adoption and influence
+
+Because of its clarity and commercial friendliness, the MIT License is favored in many programming communities and platforms, including projects on GitHub, npm, and RubyGems. It underpins numerous influential open-source projects across industries, from web frameworks to operating systems.
+Legal and practical considerations
+
+While highly permissive, the license’s warranty disclaimer means software is provided “as is,” protecting authors from liability. Its minimalism supports interoperability and reuse, but it also means licensors cannot control derivative use or redistribution once code is released. 

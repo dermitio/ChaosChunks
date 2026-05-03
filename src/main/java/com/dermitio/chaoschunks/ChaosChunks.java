@@ -11,7 +11,14 @@ import net.neoforged.fml.common.Mod;
 import com.dermitio.chaoschunks.server.ChaosChunksServer;
 import com.dermitio.chaoschunks.server.ChaosChunksNotices;
 import com.dermitio.chaoschunks.server.ChaosChunksNoticeRules;
-
+import com.dermitio.chaoschunks.sound.ChaosChunksSoundRules;
+import com.dermitio.chaoschunks.sound.ChaosChunksSoundTicker;
+import com.dermitio.chaoschunks.sound.ChaosChunksSounds;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
+import com.dermitio.chaoschunks.client.ChaosChunksConfigScreen;
+import com.dermitio.chaoschunks.client.ChaosChunksSoundConfig;
+import com.dermitio.chaoschunks.network.ChaosChunksNetwork;
 @Mod(ChaosChunks.MODID)
 public class ChaosChunks {
 
@@ -26,20 +33,32 @@ public class ChaosChunks {
             );
 
     // ** Initializes the mod, registers worldgen, client UI hooks, runtime events, and server logic **
-    public ChaosChunks(IEventBus modBus) {
-        ChaosWorldgen.BIOME_SOURCES.register(modBus);
-        modBus.addListener(ChaosChunksClient::registerPresetEditor);
+    public ChaosChunks(IEventBus modBus, ModContainer container) {
+    ChaosWorldgen.BIOME_SOURCES.register(modBus);
+    ChaosChunksSounds.SOUND_EVENTS.register(modBus);
+    modBus.addListener(ChaosChunksClient::registerPresetEditor);
 
-        net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(
-                com.dermitio.chaoschunks.server.ChaosChunksRuntimeApplier::onServerStarted
-        );
-        net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(
-                com.dermitio.chaoschunks.server.ChaosChunksRuntimeApplier::onLevelLoad
-        );
+    net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(
+            com.dermitio.chaoschunks.server.ChaosChunksRuntimeApplier::onServerStarted
+    );
+    net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(
+            com.dermitio.chaoschunks.server.ChaosChunksRuntimeApplier::onLevelLoad
+    );
 
-        com.dermitio.chaoschunks.client.ChaosChunksCatalogClient.init(modBus);
-        ChaosChunksNoticeRules.registerAll();
-        ChaosChunksNotices.init();
-        ChaosChunksServer.init();
-    }
+    container.registerExtensionPoint(
+            IConfigScreenFactory.class,
+            (minecraft, parent) -> new ChaosChunksConfigScreen(parent)
+    );
+
+    com.dermitio.chaoschunks.client.ChaosChunksCatalogClient.init(modBus);
+    ChaosChunksClient.init();
+    ChaosChunksSoundConfig.load();
+    ChaosChunksNoticeRules.registerAll();
+    ChaosChunksNetwork.init(modBus);
+    ChaosChunksNotices.init();
+    ChaosChunksSoundRules.registerAll();
+    ChaosChunksSoundTicker.init();
+    ChaosChunksServer.init();
+
+}
 }

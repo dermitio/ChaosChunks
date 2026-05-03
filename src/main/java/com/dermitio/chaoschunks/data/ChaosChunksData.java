@@ -2,18 +2,18 @@ package com.dermitio.chaoschunks.data;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.saveddata.SavedDataType;
-import net.minecraft.world.level.storage.DimensionDataStorage;
+import net.minecraft.world.level.storage.SavedDataStorage;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class ChaosChunksData extends SavedData {
 
-    public static final String ID = "chaoschunks";
+    public static final Identifier ID = Identifier.fromNamespaceAndPath("chaoschunks", "chaoschunks");
 
-    // ChaosChunks worlds should be patched
     public boolean enabled = false;
 
     public int regionX = 1;
@@ -50,9 +50,9 @@ public class ChaosChunksData extends SavedData {
     ).apply(inst, ChaosChunksData::new));
 
     public static final SavedDataType<ChaosChunksData> TYPE =
-            new SavedDataType<>(ID, ChaosChunksData::new, CODEC);
+            new SavedDataType<ChaosChunksData>(ID, ChaosChunksData::new, CODEC);
 
-    public static ChaosChunksData get(DimensionDataStorage storage) {
+    public static ChaosChunksData get(SavedDataStorage storage) {
         return storage.computeIfAbsent(TYPE);
     }
 }

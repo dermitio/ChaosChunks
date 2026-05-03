@@ -15,6 +15,8 @@ public final class ChaosChunksServer {
 
     // ** Registers server lifecycle listeners required for runtime worldgen patching **
     public static void init() {
+        ChaosChunksPlayerSoundPrefs.init();
+        ChaosChunksPlayerSoundPrefs.load();
         NeoForge.EVENT_BUS.addListener(ChaosChunksServer::onServerAboutToStart);
     }
 

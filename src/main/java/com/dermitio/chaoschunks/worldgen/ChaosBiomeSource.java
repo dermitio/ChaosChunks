@@ -8,11 +8,9 @@ import net.minecraft.core.HolderSet;
 import net.minecraft.core.QuartPos;
 import net.minecraft.core.RegistryCodecs;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeSource;
 import net.minecraft.world.level.biome.Climate;
-import net.minecraft.world.level.levelgen.XoroshiroRandomSource;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -45,13 +43,13 @@ public class ChaosBiomeSource extends BiomeSource {
 
                     RegistryCodecs.homogeneousList(Registries.BIOME)
                             .fieldOf("biomes")
-                            .forGetter(bs -> encodeSafeDirect(bs.selectionList)),
+                            .forGetter(bs -> encodeSafeDirect(bs.selectionList())),
 
                     RegistryCodecs.homogeneousList(Registries.BIOME)
                             .optionalFieldOf("feature_biomes")
-                            .forGetter(bs -> (bs.featureList.equals(bs.selectionList))
+                            .forGetter(bs -> (bs.featureList().equals(bs.selectionList()))
                                     ? Optional.empty()
-                                    : Optional.of(encodeSafeDirect(bs.featureList)))
+                                    : Optional.of(encodeSafeDirect(bs.featureList())))
             ).apply(instance, (seed, sx, sz, biomes, featureOpt) ->
                     new ChaosBiomeSource(seed, sx, sz, biomes, featureOpt.orElse(biomes))
             ));
@@ -72,10 +70,10 @@ public class ChaosBiomeSource extends BiomeSource {
     private final HolderSet<Biome> featureBiomes;
 
     // ** Cached list used for fast biome selection during noise lookup **
-    private final List<Holder<Biome>> selectionList;
+    private volatile List<Holder<Biome>> selectionList;
 
     // ** Cached list used for feature sorting and generation logic **
-    private final List<Holder<Biome>> featureList;
+    private volatile List<Holder<Biome>> featureList;
 
     // ** Constructor used when feature biomes match selection biomes **
     public ChaosBiomeSource(long seed, int sizeX, int sizeZ, HolderSet<Biome> biomes) {
@@ -89,8 +87,6 @@ public class ChaosBiomeSource extends BiomeSource {
         this.sizeZ = sizeZ;
         this.biomes = biomes;
         this.featureBiomes = featureBiomes;
-        this.selectionList = biomes.stream().toList();
-        this.featureList = featureBiomes.stream().toList();
     }
 
     // ** Returns codec used by Minecraft to serialize this biome source **
@@ -102,7 +98,7 @@ public class ChaosBiomeSource extends BiomeSource {
     // ** Supplies biome stream used by feature sorting and structure placement systems **
     @Override
     protected Stream<Holder<Biome>> collectPossibleBiomes() {
-        return featureList.stream();
+        return featureList().stream();
     }
 
     // ** Selects the biome for a chunk by hashing region coordinates with the world seed **
@@ -114,9 +110,44 @@ public class ChaosBiomeSource extends BiomeSource {
         int regionX = Math.floorDiv(chunkX, sizeX);
         int regionZ = Math.floorDiv(chunkZ, sizeZ);
 
-        long mix = seed ^ (regionX * 341873128712L) ^ (regionZ * 132897987541L);
-        RandomSource rand = new XoroshiroRandomSource(mix);
+        List<Holder<Biome>> biomes = selectionList();
+        return biomes.get(pickBiomeIndex(regionX, regionZ, biomes.size()));
+    }
 
-        return selectionList.get(rand.nextInt(selectionList.size()));
+    // ** Maps region coordinates to a deterministic biome index without allocating RNG objects **
+    private int pickBiomeIndex(int regionX, int regionZ, int biomeCount) {
+        long h = seed;
+        h ^= (long) regionX * 341873128712L;
+        h ^= (long) regionZ * 132897987541L;
+        h = mix64(h);
+
+        return Math.floorMod(h, biomeCount);
+    }
+
+    // ** Resolves selection holders lazily so tag-backed holder sets are bound before streaming **
+    private List<Holder<Biome>> selectionList() {
+        List<Holder<Biome>> list = selectionList;
+        if (list == null) {
+            list = biomes.stream().toList();
+            selectionList = list;
+        }
+        return list;
+    }
+
+    // ** Resolves feature holders lazily so tag-backed holder sets are bound before streaming **
+    private List<Holder<Biome>> featureList() {
+        List<Holder<Biome>> list = featureList;
+        if (list == null) {
+            list = featureBiomes.stream().toList();
+            featureList = list;
+        }
+        return list;
+    }
+
+    // ** Mixes coordinate hash bits to avoid obvious region repetition patterns **
+    private static long mix64(long z) {
+        z = (z ^ (z >>> 33)) * 0xff51afd7ed558ccdL;
+        z = (z ^ (z >>> 33)) * 0xc4ceb9fe1a85ec53L;
+        return z ^ (z >>> 33);
     }
 }

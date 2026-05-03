@@ -35,3 +35,18 @@ Because of its clarity and commercial friendliness, the MIT License is favored i
 Legal and practical considerations
 
 While highly permissive, the license’s warranty disclaimer means software is provided “as is,” protecting authors from liability. Its minimalism supports interoperability and reuse, but it also means licensors cannot control derivative use or redistribution once code is released. 
+
+---
+
+Additional Terms (Assets)
+
+All assets in this repository (including but not limited to textures, models, audio, and other media files), 
+unless explicitly stated otherwise, are NOT covered by the MIT License.
+
+These assets are All Rights Reserved.
+
+You may not copy, modify, redistribute, or use these assets in any form without explicit permission from the author.
+
+Exception:
+The following asset(s) are licensed under MIT:
+-"void_unreal.ogg"

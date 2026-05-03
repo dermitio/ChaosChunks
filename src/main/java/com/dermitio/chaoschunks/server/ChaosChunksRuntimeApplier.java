@@ -164,7 +164,7 @@ private static void applyToLevel(MinecraftServer server, ServerLevel level) {
     rx = Math.max(1, rx);
     rz = Math.max(1, rz);
 
-    long seed = server.getWorldData().worldGenOptions().seed();
+    long seed = server.getWorldGenSettings().options().seed();
 
     String dimId = stableId(level.dimension());
     String modeStr = (dimModes == null) ? "ON" : dimModes.getOrDefault(dimId, "ON");
@@ -196,28 +196,33 @@ private static void applyToLevel(MinecraftServer server, ServerLevel level) {
         allowed = safeFromExistingSource(currentSource, biomeReg);
     }
 
-    // ** Determines feature pool used for placement ordering **
-    HolderSet<Biome> featureAllowed = allowed;
-    if (isOnlyTheVoid(allowed)) {
-        featureAllowed = safeFromExistingSource(currentSource, biomeReg);
-    }
+    // ** Keeps feature placement compatible with the dimension's original biome source **
+    HolderSet<Biome> featureAllowed = safeFromExistingSource(currentSource, biomeReg);
 
     // ** Builds a fresh generator so feature caches match the new biome source **
     var newSource = new ChaosBiomeSource(seed, rx, rz, allowed, featureAllowed);
 
-    var newGen = new NoiseBasedChunkGenerator(newSource, noise.generatorSettings());
-    try { newGen.validate(); } catch (Throwable ignored) {}
-
-    boolean swapped = swapChunkGenerator(level, gen, newGen);
-
-    // ** Fallback path: directly replace biome source if generator swap fails **
-    if (!swapped && ((Object) gen instanceof NoiseBasedChunkGeneratorAccessor acc2)) {
-        acc2.chaoschunks$setBiomeSource(newSource);
+    boolean patched;
+    if (currentSource instanceof ChaosBiomeSource) {
+        acc.chaoschunks$setBiomeSource(newSource);
         try { noise.validate(); } catch (Throwable ignored) {}
+        patched = true;
+    } else {
+        var newGen = new NoiseBasedChunkGenerator(newSource, noise.generatorSettings());
+        try { newGen.validate(); } catch (Throwable ignored) {}
+
+        patched = swapChunkGenerator(level, gen, newGen);
+
+        // ** Existing-world fallback path when generator field replacement is unavailable **
+        if (!patched && ((Object) gen instanceof NoiseBasedChunkGeneratorAccessor acc2)) {
+            acc2.chaoschunks$setBiomeSource(newSource);
+            try { noise.validate(); } catch (Throwable ignored) {}
+            patched = true;
+        }
     }
 
-    LOGGER.info("[ChaosChunks] Patched biome generator for {} (mode={}, rx={}, rz={}, filter={})",
-            dimId, modeStr, rx, rz, eff.isEmpty() ? "<default>" : eff);
+    LOGGER.info("[ChaosChunks] Patched biome generator for {} (mode={}, rx={}, rz={}, filter={}, selectionBiomes={}, featureBiomes={}, patched={})",
+            dimId, modeStr, rx, rz, eff.isEmpty() ? "<default>" : eff, countBiomes(allowed), countBiomes(featureAllowed), patched);
 }
     // ** Attempts to replace the chunk generator in level internals **
     private static boolean swapChunkGenerator(ServerLevel level, ChunkGenerator oldGen, ChunkGenerator newGen) {
@@ -290,6 +295,15 @@ private static void applyToLevel(MinecraftServer server, ServerLevel level) {
         } catch (Throwable ignored) {}
 
         return HolderSet.direct(biomeReg.stream().map(biomeReg::wrapAsHolder).toList());
+    }
+
+    // ** Counts biome holders for diagnostics without failing generation if a holder set is odd **
+    private static long countBiomes(HolderSet<Biome> set) {
+        try {
+            return (set == null) ? 0 : set.stream().count();
+        } catch (Throwable ignored) {
+            return -1;
+        }
     }
 
     // ** Parses biome selection text into a HolderSet using registry IDs or tags **

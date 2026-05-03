@@ -7,5 +7,6 @@
   "chaoschunks.preset.biomes": "Allowed biomes (one per line; blank = ALL; prefix '-' to blacklist; prefix '#' for biome tag)",
 
   "gui.done": "Done",
-  "gui.cancel": "Cancel"
+  "gui.cancel": "Cancel",
+  "chaoschunks.music.over_the_chunk": "Dermitio - Over the Chunk"
 }

@@ -5,8 +5,12 @@
       "generator": {
         "type": "minecraft:noise",
         "biome_source": {
-          "type": "minecraft:multi_noise",
-          "preset": "minecraft:overworld"
+          "type": "chaoschunks:chaos_chunks",
+          "seed": 0,
+          "size_x": 1,
+          "size_z": 1,
+          "biomes": "#chaoschunks:allowed_biomes",
+          "feature_biomes": "#minecraft:is_overworld"
         },
         "settings": "minecraft:overworld"
       }

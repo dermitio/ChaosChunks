@@ -1,26 +1,40 @@
-# Gradle
-.gradle/
+### Gradle ###
+.gradle
 build/
-out/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/**/build/
 
-# Run environment
-run/
-logs/
-
-# IDE files
+### IntelliJ IDEA ###
 .idea/
+*.iws
 *.iml
 *.ipr
-*.iws
+out/
+!**/src/**/out/
 
-# OS files
+.run/
+
+### Eclipse ###
+.apt_generated
+.classpath
+.eclipse/
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+!**/src/**/bin/
+
+### VS Code ###
+.vscode/
+
+### Mac OS ###
 .DS_Store
-Thumbs.db
 
-# JVM crashes
-hs_err_pid*
-
-# Local test exports or temp notes
-*.log
-*.tmp
-*.jar
+### Minecraft Modding ###
+run/
+!**/src/**/run/
+**/src/generated/**/.cache/
+repo/
+!**/src/**/repo/

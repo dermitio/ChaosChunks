@@ -2,7 +2,7 @@ package com.dermitio.chaoschunks.client;
 
 import com.dermitio.chaoschunks.worldgen.ChaosBiomeSource;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
@@ -36,6 +36,9 @@ import java.util.Collections;
 import com.dermitio.chaoschunks.mixin.NoiseBasedChunkGeneratorAccessor;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.dermitio.chaoschunks.data.ChaosBiomeParsing;
+// does anyone ever give a crap about what they import?
+// like Imma import some nonsense on all the classes and leave them there soon enough...
+// oh wait.
 
 public class ChaosChunksPresetScreen extends Screen {
 
@@ -264,7 +267,7 @@ private void syncDimensionToggles() {
                     String bt = pBiomes.get(id);
                     if (bt != null) return bt;
                 }
-                return "";
+                return "[],[],[],[]";
             });
         }
 
@@ -321,7 +324,7 @@ private void syncDimensionToggles() {
                 int boxW = dimListWidth - DIM_BTN_W - DIM_BOX_GAP;
 
                 EditBox box = new EditBox(font, boxX, y, boxW, 20, Component.literal(keyId(key)));
-                box.setValue(dimensionBiomeText.getOrDefault(key, ""));
+                box.setValue(dimensionBiomeText.getOrDefault(key, "[],[],[],[]"));
                 box.setMaxLength(4096);
                 addRenderableWidget(box);
                 dimensionBiomeBoxes.add(box);
@@ -417,7 +420,7 @@ private List<ResourceKey<LevelStem>> collectAllDimensionKeys(WorldDimensions dim
     allKeys.addAll(this.datapackStemKeys);
     allKeys.addAll(ChaosChunksCatalog.readDimKeys());
 
-    return WorldDimensions.keysInOrder(allKeys.stream()).toList();
+    return WorldDimensions.keysInOrder(allKeys).toList();
 }
 
     // ** Converts a ResourceKey to a stable identifier string **
@@ -573,40 +576,41 @@ if (dimMaxScroll > 0 && deltaY != 0) {
     }
 
     // ** Renders UI elements and labels for the preset screen **
-    @Override
-    public void render(GuiGraphics gfx, int mouseX, int mouseY, float partialTick) {
-        buildDimensionToggles();
+// has been 26.1'd
+@Override
+public void extractRenderState(GuiGraphicsExtractor gfx, int mouseX, int mouseY, float partialTick) {
+    buildDimensionToggles();
 
-        this.renderTransparentBackground(gfx);
-        super.render(gfx, mouseX, mouseY, partialTick);
+    this.extractTransparentBackground(gfx);
+    super.extractRenderState(gfx, mouseX, mouseY, partialTick);
 
-        int cx = this.width / 2;
+    int cx = this.width / 2;
 
-        gfx.drawCenteredString(this.font,
-                Component.translatable("chaoschunks.preset.region_x"),
-                cx, regionXBox.getY() - 12, 0xFFFFFFFF);
+    gfx.centeredText(this.font,
+            Component.translatable("chaoschunks.preset.region_x"),
+            cx, regionXBox.getY() - 12, 0xFFFFFFFF);
 
-        gfx.drawCenteredString(this.font,
-                Component.translatable("chaoschunks.preset.region_z"),
-                cx, regionZBox.getY() - 12, 0xFFFFFFFF);
+    gfx.centeredText(this.font,
+            Component.translatable("chaoschunks.preset.region_z"),
+            cx, regionZBox.getY() - 12, 0xFFFFFFFF);
 
-        gfx.drawCenteredString(this.font,
-                Component.literal("Default biomes"),
-                cx, biomesBox.getY() - 12, 0xFFFFFFFF);
+    gfx.centeredText(this.font,
+            Component.literal("Default biomes"),
+            cx, biomesBox.getY() - 12, 0xFFFFFFFF);
 
-        for (int i = 0; i < visibleKeys.size() && i < dimensionBiomeBoxes.size(); i++) {
-            ResourceKey<LevelStem> key = visibleKeys.get(i);
-            EditBox box = dimensionBiomeBoxes.get(i);
+    for (int i = 0; i < visibleKeys.size() && i < dimensionBiomeBoxes.size(); i++) {
+        ResourceKey<LevelStem> key = visibleKeys.get(i);
+        EditBox box = dimensionBiomeBoxes.get(i);
 
-            String label = keyId(key);
-            int labelX = box.getX();
-            int labelY = box.getY() - 10;
+        String label = keyId(key);
+        int labelX = box.getX();
+        int labelY = box.getY() - 10;
 
-            gfx.drawString(this.font, Component.literal(label), labelX, labelY, 0xFFFFFFFF, false);
-        }
-
-        gfx.drawString(this.font, Component.literal("Mode"), dimListLeftX, dimListTopY - 12, 0xFFFFFFFF, false);
-        gfx.drawString(this.font, Component.literal("Biomes (blank = default)"),
-                dimListLeftX + DIM_BTN_W + DIM_BOX_GAP, dimListTopY - 22, 0xFFFFFFFF, false);
+        gfx.text(this.font, Component.literal(label), labelX, labelY, 0xFFFFFFFF, false);
     }
+
+    gfx.text(this.font, Component.literal("Mode"), dimListLeftX, dimListTopY - 12, 0xFFFFFFFF, false);
+    gfx.text(this.font, Component.literal("Biomes (blank = default)"),
+            dimListLeftX + DIM_BTN_W + DIM_BOX_GAP, dimListTopY - 22, 0xFFFFFFFF, false);
+}
 }

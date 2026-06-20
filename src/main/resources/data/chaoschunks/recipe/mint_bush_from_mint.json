@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "chaoschunks:mint",
+    "chaoschunks:mint",
+    "chaoschunks:mint",
+    "chaoschunks:void_essence"
+  ],
+  "result": {
+    "id": "chaoschunks:mint_bush"
+  }
+}

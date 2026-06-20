@@ -1,0 +1,45 @@
+{
+  "void_ambient": {
+    "sounds": [
+      {
+        "name": "chaoschunks:sfx/void_unreal"
+      }
+    ]
+  },
+  "void_gift": {
+    "subtitle": "subtitles.chaoschunks.void_gift",
+    "sounds": [
+      {
+        "name": "chaoschunks:sfx/void_gift",
+        "volume": 1.0
+      }
+    ]
+  },
+  "lavender_fields": {
+    "sounds": [
+      {
+        "name": "chaoschunks:music/lavender_fields",
+        "volume": 0.2,
+        "stream": true
+      }
+    ]
+  },
+  "over_the_chunk": {
+    "sounds": [
+      {
+        "name": "chaoschunks:music/over_the_chunk_remaster",
+        "volume": 0.1,
+        "stream": true
+      }
+    ]
+  },
+  "over_the_chunk_og": {
+    "sounds": [
+      {
+        "name": "chaoschunks:music/over_the_chunk",
+        "volume": 0.2,
+        "stream": true
+      }
+    ]
+  }
+}

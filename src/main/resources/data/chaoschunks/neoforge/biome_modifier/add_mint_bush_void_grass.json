@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "minecraft:the_void",
+  "features": "chaoschunks:mint_bush_void_grass",
+  "step": "vegetal_decoration"
+}

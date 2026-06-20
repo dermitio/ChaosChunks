@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "stage=0": {
+      "model": "chaoschunks:block/mint_bush_stage0"
+    },
+    "stage=1": {
+      "model": "chaoschunks:block/mint_bush_stage2"
+    },
+    "stage=2": {
+      "model": "chaoschunks:block/mint_bush_stage1"
+    }
+  }
+}

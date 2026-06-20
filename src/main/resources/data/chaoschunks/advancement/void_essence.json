@@ -1,0 +1,35 @@
+{
+  "parent": "chaoschunks:root",
+  "display": {
+    "icon": {
+      "id": "chaoschunks:void_essence"
+    },
+    "title": {
+      "translate": "advancements.chaoschunks.void_essence.title"
+    },
+    "description": {
+      "translate": "advancements.chaoschunks.void_essence.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "void_essence": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "chaoschunks:void_essence"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "void_essence"
+    ]
+  ]
+}

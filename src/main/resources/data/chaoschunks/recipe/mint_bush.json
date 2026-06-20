@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "minecraft:sweet_berries",
+    "#minecraft:leaves",
+    "chaoschunks:void_essence",
+    "minecraft:diamond"
+  ],
+  "result": {
+    "id": "chaoschunks:mint_bush"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#chaoschunks:mint_bush_podzol_spawn_biomes",
+  "features": "chaoschunks:mint_bush_podzol_rare",
+  "step": "vegetal_decoration"
+}

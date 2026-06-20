@@ -7,7 +7,8 @@
     "ChunkStatusTasksMixin",
     "WorldCreationUiStateMixin",
     "ChunkGeneratorMixin",
-    "FeatureSorterMixin"
+    "FeatureSorterMixin",
+    "RandomStateAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

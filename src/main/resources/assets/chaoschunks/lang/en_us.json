@@ -8,5 +8,25 @@
 
   "gui.done": "Done",
   "gui.cancel": "Cancel",
-  "chaoschunks.music.over_the_chunk": "Dermitio - Over the Chunk"
+  "chaoschunks.music.over_the_chunk": "Dermitio - Over the Chunk",
+  "chaoschunks.music.over_the_chunk_remaster": "Dermitio - Over the Chunk Remastered",
+  "chaoschunks.music.over_the_chunk_og": "Dermitio - Over the Chunk",
+  "block.chaoschunks.mint_bush": "Mint Bush",
+  "itemGroup.chaoschunks.chaos_chunks": "ChaosChunks",
+  "item.chaoschunks.mint": "Mint",
+  "item.chaoschunks.time_book": "Timekeep",
+  "item.chaoschunks.time_book.desc": "Able to hold nothingness...",
+  "item.chaoschunks.void_essence": "Void Essence",
+  "item.chaoschunks.void_essence.desc": "You captured the void in a bottle... and it kinda feels refreshing.",
+  "item.chaoschunks.deepbreath": "Deepbreath™",
+  "item.chaoschunks.deepbreath_strong": "Void Flavored Deepbreath™",
+  "item.chaoschunks.deepbreath_long": "Lasting Deepbreath™",
+  "item.chaoschunks.deepbreath.flavor": "With Deepbreath™ you can wave goodbye to all your worries with how fresh you are going to feel!",
+  "item.chaoschunks.deepbreath.desc": "Freshness %s for %s seconds",
+  "subtitles.chaoschunks.void_gift": "The void gives...",
+  "advancements.chaoschunks.root.title": "ChaosChunks",
+  "advancements.chaoschunks.root.description": "Strange things from unstable worlds",
+  "advancements.chaoschunks.void_essence.title": "You captured WHAT?!",
+  "advancements.chaoschunks.void_essence.description": "Get a swig of the void in a bottle",
+  "effect.chaoschunks.freshness": "Freshness"
 }

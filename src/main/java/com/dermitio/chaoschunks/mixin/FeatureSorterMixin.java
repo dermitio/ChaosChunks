@@ -16,6 +16,9 @@ import org.slf4j.Logger;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(FeatureSorter.class)
+// =========
+// Guards biome decoration sorting against feature-order cycles from mixed biome pools //
+// =========
 public class FeatureSorterMixin {
 
     // ** Provides logging for fallback activation and mixin diagnostics **
@@ -30,7 +33,9 @@ public class FeatureSorterMixin {
     // ** Allows disabling all decorations on feature cycles while debugging **
     private static final boolean FAIL_CLOSED_ON_FEATURE_CYCLE = true;
 
-    // ** Wraps vanilla feature sorting to intercept cycles and substitute a safe fallback ordering **
+    // =========
+    // Intercepts vanilla feature sorting failures before they abort chunk decoration //
+    // =========
     @WrapMethod(method = "buildFeaturesPerStep")
     private static <T> List<
         FeatureSorter.StepFeatureData
@@ -119,7 +124,9 @@ public class FeatureSorterMixin {
         return out;
     }
 
-    // ** Builds bounded fallback feature data when vanilla sorting detects cycles **
+    // =========
+    // Produces bounded fallback data instead of merging every feature from every biome //
+    // =========
     private static <T> List<FeatureSorter.StepFeatureData> chaoschunks$fallback(
         List<T> sources,
         Function<T, List<HolderSet<PlacedFeature>>> func

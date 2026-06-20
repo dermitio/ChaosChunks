@@ -1,7 +1,8 @@
 package com.dermitio.chaoschunks.mixin;
 
 import com.dermitio.chaoschunks.ChaosChunks;
-import com.dermitio.chaoschunks.server.ChaosChunksPendingConfig;
+import com.dermitio.chaoschunks.client.config.ChaosChunksDefaultsConfig;
+import com.dermitio.chaoschunks.server.config.ChaosChunksPendingConfig;
 import net.minecraft.client.gui.screens.worldselection.WorldCreationUiState;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
@@ -23,10 +24,40 @@ public class WorldCreationUiStateMixin {
         ResourceKey<WorldPreset> presetKey = extractPresetKey(entry);
 
         if (ChaosChunks.CHAOS_PRESET_KEY.equals(presetKey)) {
-            ChaosChunksPendingConfig.set(1, 1, "", Map.of(), Map.of());
+            ChaosChunksPendingConfig.set(1, 1, "", Map.of(), defaultDimensionModes(), defaultSeedRandomizers(), defaultTerrainRandomizers());
         } else {
             ChaosChunksPendingConfig.clear();
         }
+    }
+
+    private static Map<String, String> defaultDimensionModes() {
+        return Map.of(ChaosChunksPendingConfig.DEFAULT_DIMENSION_ID, ChaosChunksDefaultsConfig.defaultDimensionMode().name());
+    }
+
+    private static Map<String, Long> defaultSeedRandomizers() {
+        if (ChaosChunksDefaultsConfig.regionSeedMode() != ChaosChunksDefaultsConfig.RegionSeedMode.RANDOMIZED_REGION_SEED) {
+            return Map.of();
+        }
+
+        return Map.of(
+                ChaosChunksPendingConfig.DEFAULT_DIMENSION_ID,
+                ChaosChunksPendingConfig.RANDOMIZE_DEFAULT_DIMENSIONS
+        );
+    }
+
+    private static Map<String, Long> defaultTerrainRandomizers() {
+        if (!ChaosChunksDefaultsConfig.experimentalWorldTypeRandomization()) {
+            return Map.of();
+        }
+
+        if (ChaosChunksDefaultsConfig.terrainProfileMode() != ChaosChunksDefaultsConfig.TerrainProfileMode.RANDOMIZED_TERRAIN_PROFILES) {
+            return Map.of();
+        }
+
+        return Map.of(
+                ChaosChunksPendingConfig.DEFAULT_DIMENSION_ID,
+                ChaosChunksPendingConfig.RANDOMIZE_DEFAULT_DIMENSIONS
+        );
     }
 
     /**

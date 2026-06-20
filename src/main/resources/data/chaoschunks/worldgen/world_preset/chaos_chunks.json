@@ -3,7 +3,7 @@
     "minecraft:overworld": {
       "type": "minecraft:overworld",
       "generator": {
-        "type": "minecraft:noise",
+        "type": "chaoschunks:noise",
         "biome_source": {
           "type": "chaoschunks:chaos_chunks",
           "seed": 0,
@@ -18,7 +18,7 @@
     "minecraft:the_end": {
       "type": "minecraft:the_end",
       "generator": {
-        "type": "minecraft:noise",
+        "type": "chaoschunks:noise",
         "biome_source": {
           "type": "minecraft:the_end"
         },
@@ -28,7 +28,7 @@
     "minecraft:the_nether": {
       "type": "minecraft:the_nether",
       "generator": {
-        "type": "minecraft:noise",
+        "type": "chaoschunks:noise",
         "biome_source": {
           "type": "minecraft:multi_noise",
           "preset": "minecraft:nether"

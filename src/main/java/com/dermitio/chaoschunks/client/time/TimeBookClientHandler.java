@@ -18,7 +18,7 @@ public final class TimeBookClientHandler {
         if (!event.getItemStack().is(ChaosChunksItems.TIME_BOOK.get())) return;
         if (event.getEntity().isShiftKeyDown()) return;
 
-        Minecraft.getInstance().setScreen(new TimeBookScreen());
+        Minecraft.getInstance().gui.setScreen(new TimeBookScreen());
         event.setCanceled(true);
         event.setCancellationResult(InteractionResult.SUCCESS);
     }

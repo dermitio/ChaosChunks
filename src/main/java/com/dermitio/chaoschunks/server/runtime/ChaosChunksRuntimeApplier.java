@@ -35,7 +35,8 @@ import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import org.slf4j.Logger;
 import com.dermitio.chaoschunks.data.catalog.ChaosBiomeParsing;
-import java.lang.reflect.Field;
+import com.dermitio.chaoschunks.mixin.ChunkMapAccessor;
+import net.minecraft.world.level.chunk.status.WorldGenContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -289,7 +290,7 @@ private static void applyNoiseGeneratorPath(
     String effective = effectiveBiomeText(settings, dimId);
 
     String sig = "FULL|" + settings.regionX() + "|" + settings.regionZ() + "|" + seed + "|" + seedRandomizer + "|" + terrainRandomizer + "|" + modeStr.toUpperCase(Locale.ROOT) + "|" + norm(effective);
-    String prev = APPLIED_SIGNATURE.put(key, sig);
+    String prev = APPLIED_SIGNATURE.get(key);
     if (sig.equals(prev)) return;
 
     Registry<Biome> biomeReg = server.registryAccess().lookupOrThrow(Registries.BIOME);
@@ -313,13 +314,8 @@ private static void applyNoiseGeneratorPath(
 
     boolean patched = swapChunkGenerator(level, gen, newGen);
 
-    // ** Existing-world fallback path when generator field replacement is unavailable **
-    if (!patched && ((Object) gen instanceof NoiseBasedChunkGeneratorAccessor acc2)) {
-        acc2.chaoschunks$setBiomeSource(newSource);
-        try { noise.validate(); } catch (Throwable ignored) {}
-        try { gen.refreshFeaturesPerStep(); } catch (Throwable ignored) {}
-        patched = true;
-    }
+    if (patched) APPLIED_SIGNATURE.put(key, sig);
+    else LOGGER.error("[ChaosChunks] Could not apply generator settings to {}.", dimId);
 
     String eff = norm(effective);
     LOGGER.info("[ChaosChunks] Patched biome generator for {} (path=full, mode={}, rx={}, rz={}, seedRandomizer={}, terrainRandomizer={}, filter={}, selectionBiomes={}, featureBiomes={}, patched={})",
@@ -349,7 +345,7 @@ private static void applyBiomeSourceOnlyPath(
     long seed = server.getWorldGenSettings().options().seed();
     String effective = effectiveBiomeText(settings, dimId);
     String sig = "BIOME_ONLY|" + settings.regionX() + "|" + settings.regionZ() + "|" + seed + "|" + modeStr.toUpperCase(Locale.ROOT) + "|" + norm(effective);
-    String prev = APPLIED_SIGNATURE.put(key, sig);
+    String prev = APPLIED_SIGNATURE.get(key);
     if (sig.equals(prev)) return;
 
     Registry<Biome> biomeReg = server.registryAccess().lookupOrThrow(Registries.BIOME);
@@ -359,6 +355,7 @@ private static void applyBiomeSourceOnlyPath(
 
     var newSource = new ChaosBiomeSource(seed, settings.regionX(), settings.regionZ(), allowed, featureAllowed, 0L, originalSource);
     acc.chaoschunks$setBiomeSource(newSource);
+    APPLIED_SIGNATURE.put(key, sig);
     try { gen.refreshFeaturesPerStep(); } catch (Throwable ignored) {}
 
     String eff = norm(effective);
@@ -459,15 +456,6 @@ private static void restoreOriginalGeneration(
     if (restored == null || restored == currentGen) return;
 
     boolean restoredFields = swapChunkGenerator(level, currentGen, restored);
-    if (!restoredFields && currentGen instanceof NoiseBasedChunkGenerator currentNoise
-            && restored instanceof NoiseBasedChunkGenerator restoredNoise
-            && ((Object) currentNoise instanceof NoiseBasedChunkGeneratorAccessor currentAcc)
-            && ((Object) restoredNoise instanceof NoiseBasedChunkGeneratorAccessor restoredAcc)) {
-        currentAcc.chaoschunks$setBiomeSource(restoredAcc.chaoschunks$getBiomeSource());
-        try { currentNoise.validate(); } catch (Throwable ignored) {}
-        try { currentNoise.refreshFeaturesPerStep(); } catch (Throwable ignored) {}
-        restoredFields = true;
-    }
 
     LOGGER.info("[ChaosChunks] Restored vanilla/custom generator for {} (restored={})", dimId, restoredFields);
 }
@@ -602,63 +590,22 @@ private static BiomeSource originalBiomeSource(BiomeSource currentSource) {
     // Replaces cached chunk-generator references used by already-loaded levels //
     // =========
     private static boolean swapChunkGenerator(ServerLevel level, ChunkGenerator oldGen, ChunkGenerator newGen) {
-        boolean changed = false;
-
-        Object chunkSource = level.getChunkSource();
-        changed |= replaceGeneratorFields(chunkSource, oldGen, newGen);
-
-        Object chunkMap = findFirstFieldByTypeName(chunkSource, "net.minecraft.server.level.ChunkMap");
-        if (chunkMap != null) {
-            changed |= replaceGeneratorFields(chunkMap, oldGen, newGen);
+        var chunkSource = level.getChunkSource();
+        var accessor = (ChunkMapAccessor) (Object) chunkSource.chunkMap;
+        WorldGenContext current = accessor.chaoschunks$getWorldGenContext();
+        if (current.generator() != oldGen) {
+            LOGGER.warn("[ChaosChunks] Generator changed before settings could be applied to {}.", level.dimension());
+            return false;
         }
 
-        return changed;
-    }
-
-    // ** Finds the first field on an object matching a fully qualified type name **
-    private static Object findFirstFieldByTypeName(Object owner, String typeName) {
-        for (Field f : getAllFields(owner.getClass())) {
-            if (!f.getType().getName().equals(typeName)) continue;
-            try {
-                f.setAccessible(true);
-                return f.get(owner);
-            } catch (Throwable ignored) {}
-        }
-        return null;
-    }
-
-    // ** Replaces generator references inside an object via reflection **
-    private static boolean replaceGeneratorFields(Object target, ChunkGenerator oldGen, ChunkGenerator newGen) {
-        boolean changed = false;
-
-        for (Field f : getAllFields(target.getClass())) {
-            if (!ChunkGenerator.class.isAssignableFrom(f.getType())) continue;
-
-            try {
-                f.setAccessible(true);
-                Object cur = f.get(target);
-                if (cur == oldGen) {
-                    f.set(target, newGen);
-                    changed = true;
-                }
-            } catch (Throwable t) {
-                LOGGER.debug("[ChaosChunks] Failed swapping generator field {} on {}: {}",
-                        f.getName(), target.getClass().getName(), t.toString());
-            }
-        }
-
-        return changed;
-    }
-
-    // ** Collects all fields from a class hierarchy **
-    private static List<Field> getAllFields(Class<?> cls) {
-        List<Field> out = new ArrayList<>();
-        Class<?> c = cls;
-        while (c != null && c != Object.class) {
-            for (Field f : c.getDeclaredFields()) out.add(f);
-            c = c.getSuperclass();
-        }
-        return out;
+        // 26.3 generation tasks read the generator from this context, not a direct ChunkMap field.
+        // Rebuild structure placement too: it captures the generator's biome source and seed.
+        var structures = newGen.createState(level.registryAccess().lookupOrThrow(Registries.STRUCTURE_SET),
+                chunkSource.randomState(), level.getSeed());
+        accessor.chaoschunks$setGeneratorState(structures);
+        accessor.chaoschunks$setWorldGenContext(new WorldGenContext(current.level(), newGen,
+                current.structureManager(), current.lightEngine(), current.mainThreadExecutor(), current.unsavedListener()));
+        return chunkSource.getGenerator() == newGen;
     }
 
     // ** Builds a safe biome set from an existing biome source **

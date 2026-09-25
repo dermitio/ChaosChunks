@@ -7,7 +7,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.QuartPos;
-import net.minecraft.core.RegistryCodecs;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeSource;
@@ -52,11 +51,11 @@ public class ChaosBiomeSource extends BiomeSource {
                     Codec.LONG.optionalFieldOf("seed_randomizer", 0L).forGetter(bs -> bs.seedRandomizer),
                     Codec.LONG.optionalFieldOf("terrain_randomizer", 0L).forGetter(bs -> bs.terrainRandomizer),
 
-                    RegistryCodecs.homogeneousList(Registries.BIOME)
+                    Biome.LIST_CODEC
                             .fieldOf("biomes")
                             .forGetter(bs -> encodeSafeDirect(bs.selectionList())),
 
-                    RegistryCodecs.homogeneousList(Registries.BIOME)
+                    Biome.LIST_CODEC
                             .optionalFieldOf("feature_biomes")
                             .forGetter(bs -> (bs.featureList().equals(bs.selectionList()))
                                     ? Optional.empty()
@@ -183,6 +182,10 @@ public class ChaosBiomeSource extends BiomeSource {
     // Selects the biome for a quart position using the containing chunk region //
     // =========
     @Override
+    public net.minecraft.world.level.biome.BiomeResolver createResolver(Climate.Sampler sampler) {
+        return (x, y, z) -> getNoiseBiome(x, y, z, sampler);
+    }
+
     public Holder<Biome> getNoiseBiome(int x, int y, int z, Climate.Sampler sampler) {
         int chunkX = QuartPos.toBlock(x) >> 4;
         int chunkZ = QuartPos.toBlock(z) >> 4;

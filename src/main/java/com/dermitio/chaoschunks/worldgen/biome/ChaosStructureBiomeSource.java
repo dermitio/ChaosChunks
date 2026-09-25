@@ -35,7 +35,7 @@ public final class ChaosStructureBiomeSource extends BiomeSource {
     }
 
     @Override
-    public Holder<Biome> getNoiseBiome(int quartX, int quartY, int quartZ, Climate.Sampler sampler) {
-        return delegate.getNoiseBiome(quartX, quartY, quartZ, sampler);
+    public net.minecraft.world.level.biome.BiomeResolver createResolver(Climate.Sampler sampler) {
+        return delegate.createResolver(sampler);
     }
 }

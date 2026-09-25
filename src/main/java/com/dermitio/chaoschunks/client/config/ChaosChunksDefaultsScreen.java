@@ -55,7 +55,7 @@ public class ChaosChunksDefaultsScreen extends Screen {
 
         addRenderableWidget(Button.builder(
                 Component.translatable("gui.done"),
-                button -> Minecraft.getInstance().setScreen(parent)
+                button -> Minecraft.getInstance().gui.setScreen(parent)
         ).bounds(centerX - 100, this.height - 28, 200, 20).build());
     }
 

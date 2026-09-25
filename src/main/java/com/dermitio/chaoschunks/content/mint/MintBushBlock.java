@@ -2,7 +2,6 @@ package com.dermitio.chaoschunks.content.mint;
 
 import com.dermitio.chaoschunks.config.ChaosChunksExperimentsConfig;
 import com.dermitio.chaoschunks.content.registry.ChaosChunksItems;
-import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -31,7 +30,6 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 // Three-stage mint bush with shears-only harvesting and no natural generation //
 // =========
 public class MintBushBlock extends VegetationBlock {
-    public static final MapCodec<MintBushBlock> CODEC = simpleCodec(MintBushBlock::new);
     private static final int TICKS_PER_MINECRAFT_DAY = 24000;
     private static final int SMALL_TO_HARVESTED_TICKS = TICKS_PER_MINECRAFT_DAY * 3;
     private static final int HARVESTED_TO_GROWN_TICKS = TICKS_PER_MINECRAFT_DAY;
@@ -44,11 +42,6 @@ public class MintBushBlock extends VegetationBlock {
     private static final VoxelShape SHAPE_SMALL = Block.column(8.0, 0.0, 9.0);
     private static final VoxelShape SHAPE_GROWN = Block.column(14.0, 0.0, 16.0);
     private static final VoxelShape SHAPE_HARVESTED = Block.column(12.0, 0.0, 13.0);
-
-    @Override
-    public MapCodec<MintBushBlock> codec() {
-        return CODEC;
-    }
 
     public MintBushBlock(BlockBehaviour.Properties properties) {
         super(properties);

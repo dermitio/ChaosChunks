@@ -22,17 +22,17 @@ public class ChaosChunksExperimentalScreen extends Screen {
 
         addRenderableWidget(Button.builder(
                 Component.literal("World Type"),
-                button -> Minecraft.getInstance().setScreen(new ChaosChunksWorldTypeExperimentalScreen(this))
+                button -> Minecraft.getInstance().gui.setScreen(new ChaosChunksWorldTypeExperimentalScreen(this))
         ).bounds(centerX - 100, centerY - 29, 200, 20).build());
 
         addRenderableWidget(Button.builder(
                 Component.literal("Time, Void, Mint"),
-                button -> Minecraft.getInstance().setScreen(new ChaosChunksTimeVoidMintExperimentalScreen(this))
+                button -> Minecraft.getInstance().gui.setScreen(new ChaosChunksTimeVoidMintExperimentalScreen(this))
         ).bounds(centerX - 100, centerY - 3, 200, 20).build());
 
         addRenderableWidget(Button.builder(
                 Component.translatable("gui.done"),
-                button -> Minecraft.getInstance().setScreen(parent)
+                button -> Minecraft.getInstance().gui.setScreen(parent)
         ).bounds(centerX - 100, this.height - 28, 200, 20).build());
     }
 

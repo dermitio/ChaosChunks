@@ -33,7 +33,7 @@ public class FreshnessMobEffect extends MobEffect {
     public static void onLivingDamage(LivingDamageEvent.Post event) {
         if (!ChaosChunksExperimentsConfig.timeVoidMint()) return;
 
-        float damage = event.getNewDamage();
+        float damage = event.getHealthDamage();
         if (damage <= 0.0F || event.getEntity().level().isClientSide()) return;
 
         long gameTime = event.getEntity().level().getGameTime();

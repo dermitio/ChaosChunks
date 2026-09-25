@@ -40,8 +40,8 @@
           {
             "type": "minecraft:would_survive",
             "state": {
-              "Name": "chaoschunks:mint_bush",
-              "Properties": {
+              "id": "chaoschunks:mint_bush",
+              "properties": {
                 "stage": "0"
               }
             }

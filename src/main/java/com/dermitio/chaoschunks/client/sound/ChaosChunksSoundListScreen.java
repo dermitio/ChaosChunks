@@ -85,7 +85,7 @@ public class ChaosChunksSoundListScreen extends Screen {
                 Component.translatable("gui.done"),
                 button -> {
                     ChaosChunksSoundConfig.stopPreview();
-                    Minecraft.getInstance().setScreen(parent);
+                    Minecraft.getInstance().gui.setScreen(parent);
                 }
         ).bounds(centerX - 100, this.height - 28, 200, 20).build());
     }

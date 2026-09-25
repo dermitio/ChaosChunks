@@ -30,39 +30,39 @@ public class ChaosChunksConfigScreen extends Screen {
 
         addRenderableWidget(Button.builder(
                 Component.literal("Music"),
-                button -> Minecraft.getInstance().setScreen(new ChaosChunksSoundListScreen(this, true))
+                button -> Minecraft.getInstance().gui.setScreen(new ChaosChunksSoundListScreen(this, true))
         ).bounds(centerX - 100, centerY - 37, 200, 20).build());
 
         addRenderableWidget(Button.builder(
                 Component.literal("Sound"),
-                button -> Minecraft.getInstance().setScreen(new ChaosChunksSoundListScreen(this, false))
+                button -> Minecraft.getInstance().gui.setScreen(new ChaosChunksSoundListScreen(this, false))
         ).bounds(centerX - 100, centerY - 11, 200, 20).build());
 
         addRenderableWidget(Button.builder(
                 Component.literal("UI Events"),
-                button -> Minecraft.getInstance().setScreen(new ChaosChunksUiEventListScreen(this))
+                button -> Minecraft.getInstance().gui.setScreen(new ChaosChunksUiEventListScreen(this))
         ).bounds(centerX - 100, centerY + 15, 200, 20).build());
 
         addRenderableWidget(Button.builder(
                 Component.literal("Preferences"),
-                button -> Minecraft.getInstance().setScreen(new ChaosChunksPreferencesScreen(this))
+                button -> Minecraft.getInstance().gui.setScreen(new ChaosChunksPreferencesScreen(this))
         ).bounds(centerX - 100, centerY + 41, 200, 20).build());
 
         addRenderableWidget(Button.builder(
                 Component.literal("Defaults"),
-                button -> Minecraft.getInstance().setScreen(new ChaosChunksDefaultsScreen(this))
+                button -> Minecraft.getInstance().gui.setScreen(new ChaosChunksDefaultsScreen(this))
         ).bounds(centerX - 100, centerY + 67, 200, 20).build());
 
         addRenderableWidget(Button.builder(
                 Component.literal("Experimental"),
-                button -> Minecraft.getInstance().setScreen(new ChaosChunksExperimentalScreen(this))
+                button -> Minecraft.getInstance().gui.setScreen(new ChaosChunksExperimentalScreen(this))
         ).bounds(centerX - 100, centerY + 93, 200, 20).build());
 
         addRenderableWidget(Button.builder(
                 Component.translatable("gui.done"),
                 button -> {
                     ChaosChunksSoundConfig.stopPreview();
-                    Minecraft.getInstance().setScreen(parent);
+                    Minecraft.getInstance().gui.setScreen(parent);
                 }
         ).bounds(centerX - 100, centerY + 127, 200, 20).build());
     }

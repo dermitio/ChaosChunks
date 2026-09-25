@@ -4,11 +4,14 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "NoiseBasedChunkGeneratorAccessor",
+    "ChunkMapAccessor",
     "ChunkStatusTasksMixin",
-    "WorldCreationUiStateMixin",
     "ChunkGeneratorMixin",
     "FeatureSorterMixin",
     "RandomStateAccessor"
+  ],
+  "client": [
+    "WorldCreationUiStateMixin"
   ],
   "injectors": {
     "defaultRequire": 1

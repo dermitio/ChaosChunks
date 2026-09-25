@@ -74,7 +74,7 @@ final class ChaosNoiseState {
                     )
                     : chaos.seed();
             Holder<NoiseGeneratorSettings> effectiveSettings = settings == null ? this.settings : settings;
-            RandomState created = RandomState.create(effectiveSettings.value(), accessor.chaoschunks$getNoises(), seed);
+            RandomState created = RandomState.create(accessor.chaoschunks$getNoises(), seed, effectiveSettings.value());
             regionStates.put(cacheKey, created);
             return created;
         }

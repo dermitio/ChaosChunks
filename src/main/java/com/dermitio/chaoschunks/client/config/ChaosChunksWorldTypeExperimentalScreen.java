@@ -38,7 +38,7 @@ public class ChaosChunksWorldTypeExperimentalScreen extends Screen {
                     }
                     ChaosChunksDefaultsConfig.save();
                     button.setMessage(enabledText());
-                    Minecraft.getInstance().setScreen(new ChaosChunksWorldTypeExperimentalScreen(parent));
+                    Minecraft.getInstance().gui.setScreen(new ChaosChunksWorldTypeExperimentalScreen(parent));
                 }
         ).bounds(centerX - 100, y, 200, 20).build());
 
@@ -58,7 +58,7 @@ public class ChaosChunksWorldTypeExperimentalScreen extends Screen {
 
         addRenderableWidget(Button.builder(
                 Component.translatable("gui.done"),
-                button -> Minecraft.getInstance().setScreen(parent)
+                button -> Minecraft.getInstance().gui.setScreen(parent)
         ).bounds(centerX - 100, this.height - 28, 200, 20).build());
     }
 

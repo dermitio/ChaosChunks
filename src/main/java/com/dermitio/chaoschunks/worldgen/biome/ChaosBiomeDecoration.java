@@ -141,7 +141,7 @@ public final class ChaosBiomeDecoration {
 
             try {
                 level.setCurrentlyGenerating(currentlyGenerating);
-                structureManager.startsForStructure(sectionPos, structure)
+                structureManager.startsForStructure(sectionPos.x(), sectionPos.z(), structure)
                         .forEach(start -> start.placeInChunk(level, structureManager, generator, random, writableArea(chunk), centerPos));
             } catch (Exception e) {
                 CrashReport report = CrashReport.forThrowable(e, "Feature placement");
@@ -182,6 +182,7 @@ public final class ChaosBiomeDecoration {
         Arrays.sort(indexArray);
         FeatureSorter.StepFeatureData stepFeatureData = featureList.get(stepIndex);
 
+        var placer = new net.minecraft.world.level.levelgen.placement.FeaturePlacer(level, generator);
         for (int globalIndexOfFeature : indexArray) {
             PlacedFeature feature = stepFeatureData.features().get(globalIndexOfFeature);
             if (isDisabledExperimentalFeature(featureRegistry, feature)) continue;
@@ -193,7 +194,7 @@ public final class ChaosBiomeDecoration {
 
             try {
                 level.setCurrentlyGenerating(currentlyGenerating);
-                feature.placeWithBiomeCheck(level, generator, random, origin);
+                placer.placeWithBiomeCheck(feature, random, origin);
             } catch (Exception e) {
                 CrashReport report = CrashReport.forThrowable(e, "Feature placement");
                 report.addCategory("Feature").setDetail("Description", currentlyGenerating::get);

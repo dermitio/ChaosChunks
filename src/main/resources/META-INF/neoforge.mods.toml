@@ -7,9 +7,9 @@ config="chaoschunks.mixins.json"
 
 [[mods]]
 modId="chaoschunks"
-version="0.3.1"
+version="${mod_version}"
 displayName="ChaosChunks"
-logoFile="logo.png"
+bannerFile="logo.png"
 credits="Dermitio"
 authors="Dermitio"
 displayTest="IGNORE_SERVER_VERSION"
@@ -18,13 +18,13 @@ description="Randomize your chunks to your hearts content!"
 [[dependencies.chaoschunks]]
     modId="neoforge"
     type="required"
-    versionRange="[26.1.*,)"
+    versionRange="[${neo_version},26.4)"
     ordering="NONE"
     side="BOTH"
 
 [[dependencies.chaoschunks]]
     modId="minecraft"
     type="required"
-    versionRange="[26.1,26.9)"
+    versionRange="${minecraft_version_range}"
     ordering="NONE"
     side="BOTH"

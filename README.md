@@ -16,8 +16,8 @@ Custom world generation mod for Minecraft (NeoForge).
 
 ## Installation
 
-1. Install **Minecraft 1.21.11**
-2. Install the latest **NeoForge**
+1. Install **Minecraft 26.3**
+2. Install **NeoForge 26.3.0.7-beta or newer for Minecraft 26.3**
 3. Download the latest ChaosChunks.jar from Curseforge
 - https://www.curseforge.com/minecraft/mc-mods/chaoschunks
 4. Place it in your `mods/` folder
@@ -34,7 +34,7 @@ cd ChaosChunks
 
 Requires:
 
-* Java 21+
+* Java 25 (Gradle selects its Java 25 build JVM automatically)
 * NeoForge MDK environment
 
 ---
@@ -43,8 +43,10 @@ Requires:
 
 1. Open the world creation screen
 2. Select **ChaosChunks** in world types and click **Customize**
-3. Configure biome rules or dimension settings
-4. Generate the world
+3. Select **Global** or a dimension from the scrollable list.
+4. On **Biomes**, search biome IDs or `#tags` and toggle **Whitelist** or **Blacklist**. Click a selected rule again to clear it. **Show text** exposes the editable four-group expression; edits stay synchronized with the table.
+5. Dimensions inherit Global rules until you edit them. Restore inheritance under **Settings → Biome rules**. Settings also contains generation mode, region seed randomization, and experimental terrain profiles. Global Settings contains the region sizes.
+6. Return to the dimension list and click **Done** to save, or **Cancel** to discard the draft. Then generate the world.
 
 * When entering biome tags or ids or blacklisting use the following format:
 ### [],[],[],[] / "","","",""
@@ -74,9 +76,9 @@ Explanation:
 
 ## Compatibility
 
-* Minecraft: **1.21.11**
+* Minecraft: **26.3**
 * Loader: **NeoForge**
-* Works in singleplayer and servers 
+* Works in singleplayer and servers
 * Server-side only — clients can join without installing the mod
 
 Known issues:
@@ -121,4 +123,3 @@ If you backport the mod (please do) be proud of it.
 
 The mod is not exactly lightweight as it turns chunk generation into a benchmark for the CPU.
 Also this mod was created with the idea of use alongside of world type to biome mods so go give those a try
-

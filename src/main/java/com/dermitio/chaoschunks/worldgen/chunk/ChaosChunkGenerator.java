@@ -28,6 +28,7 @@ import net.minecraft.world.level.levelgen.LegacyRandomSource;
 import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
 import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
 import net.minecraft.world.level.levelgen.RandomState;
+import net.minecraft.world.level.levelgen.densityfunction.SamplerContext;
 import net.minecraft.world.level.levelgen.RandomSupport;
 import net.minecraft.world.level.levelgen.WorldgenRandom;
 import net.minecraft.world.level.levelgen.blending.Blender;
@@ -119,6 +120,7 @@ public class ChaosChunkGenerator extends NoiseBasedChunkGenerator {
         return ChunkGeneratorStructureState.createForNormal(
                 randomState,
                 structureSeed(legacyLevelSeed),
+                getOrigin(randomState),
                 ChaosStructureBiomeSource.wrap(this.getBiomeSource()),
                 structureSets
         );
@@ -139,49 +141,27 @@ public class ChaosChunkGenerator extends NoiseBasedChunkGenerator {
     }
 
     @Override
-    public CompletableFuture<ChunkAccess> fillFromNoise(Blender blender, RandomState randomState, StructureManager structureManager, ChunkAccess centerChunk) {
-        TerrainChoice choice = terrainChoice(centerChunk.getPos());
-        if (choice.isFlat()) {
-            fillFlatChunk(centerChunk, choice.flatSettings());
-            return CompletableFuture.completedFuture(centerChunk);
-        }
-
-        if (choice.profileIndex() == 0) {
-            return super.fillFromNoise(blender, chaosState(randomState, centerChunk.getPos(), choice), structureManager, centerChunk);
-        }
-
-        return generatorFor(choice).fillFromNoise(blender, chaosState(randomState, centerChunk.getPos(), choice), structureManager, centerChunk);
-    }
-
-    @Override
-    public void buildSurface(WorldGenRegion region, StructureManager structureManager, RandomState randomState, ChunkAccess protoChunk) {
-        TerrainChoice choice = terrainChoice(protoChunk.getPos());
-        if (choice.isFlat()) return;
-        if (choice.profileIndex() == 0) {
-            super.buildSurface(region, structureManager, chaosState(randomState, protoChunk.getPos(), choice), protoChunk);
-            return;
-        }
-
-        generatorFor(choice).buildSurface(region, structureManager, chaosState(randomState, protoChunk.getPos(), choice), protoChunk);
-    }
-
-    @Override
-    public void applyCarvers(
-            WorldGenRegion region,
-            long seed,
+    public CompletableFuture<ChunkAccess> buildTerrain(
+            ChunkAccess chunk,
+            Blender blender,
             RandomState randomState,
-            BiomeManager biomeManager,
             StructureManager structureManager,
-            ChunkAccess chunk
+            BiomeManager biomeManager,
+            WorldGenRegion carverBiomeRegion,
+            java.util.Set<Holder<Biome>> possibleBiomes
     ) {
         TerrainChoice choice = terrainChoice(chunk.getPos());
-        if (choice.isFlat()) return;
-        if (choice.profileIndex() == 0) {
-            super.applyCarvers(region, seedForChunk(seed, chunk.getPos()), chaosState(randomState, chunk.getPos(), choice), biomeManager, structureManager, chunk);
-            return;
+        if (choice.isFlat()) {
+            fillFlatChunk(chunk, choice.flatSettings());
+            return CompletableFuture.completedFuture(chunk);
         }
 
-        generatorFor(choice).applyCarvers(region, seedForChunk(seed, chunk.getPos()), chaosState(randomState, chunk.getPos(), choice), biomeManager, structureManager, chunk);
+        RandomState terrainState = chaosState(randomState, chunk.getPos(), choice);
+        if (choice.profileIndex() == 0) {
+            return super.buildTerrain(chunk, blender, terrainState, structureManager, biomeManager, carverBiomeRegion, possibleBiomes);
+        }
+
+        return generatorFor(choice).buildTerrain(chunk, blender, terrainState, structureManager, biomeManager, carverBiomeRegion, possibleBiomes);
     }
 
     @Override
@@ -213,7 +193,7 @@ public class ChaosChunkGenerator extends NoiseBasedChunkGenerator {
     }
 
     @Override
-    public void addDebugScreenInfo(List<String> result, RandomState randomState, BlockPos feetPos) {
+    public void addDebugScreenInfo(List<String> result, RandomState randomState, BlockPos feetPos, SamplerContext samplerContext) {
         TerrainChoice choice = terrainChoiceForBlock(feetPos.getX(), feetPos.getZ());
         if (choice.isFlat()) {
             result.add("ChaosTerrain: superflat preset");
@@ -221,11 +201,11 @@ public class ChaosChunkGenerator extends NoiseBasedChunkGenerator {
         }
 
         if (choice.profileIndex() == 0) {
-            super.addDebugScreenInfo(result, chaosState(randomState, feetPos.getX(), feetPos.getZ(), choice), feetPos);
+            super.addDebugScreenInfo(result, chaosState(randomState, feetPos.getX(), feetPos.getZ(), choice), feetPos, samplerContext);
             return;
         }
 
-        generatorFor(choice).addDebugScreenInfo(result, chaosState(randomState, feetPos.getX(), feetPos.getZ(), choice), feetPos);
+        generatorFor(choice).addDebugScreenInfo(result, chaosState(randomState, feetPos.getX(), feetPos.getZ(), choice), feetPos, samplerContext);
     }
 
     @Override
@@ -233,10 +213,10 @@ public class ChaosChunkGenerator extends NoiseBasedChunkGenerator {
         if (this.generatorSettings().value().disableMobGeneration()) return;
 
         ChunkPos center = worldGenRegion.getCenter();
-        Holder<Biome> biome = worldGenRegion.getBiome(center.getWorldPosition().atY(worldGenRegion.getMaxY()));
+        BlockPos sourcePos = center.getWorldPosition().atY(worldGenRegion.getMaxY());
         WorldgenRandom random = new WorldgenRandom(new LegacyRandomSource(RandomSupport.generateUniqueSeed()));
         random.setDecorationSeed(seedForChunk(worldGenRegion.getSeed(), center), center.getMinBlockX(), center.getMinBlockZ());
-        NaturalSpawner.spawnMobsForChunkGeneration(worldGenRegion, biome, center, random);
+        NaturalSpawner.spawnMobsForChunkGeneration(worldGenRegion, sourcePos, center, random);
     }
 
     // =========

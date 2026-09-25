@@ -45,7 +45,7 @@ public final class VoidEssenceCapture {
         if (stack.isEmpty()) {
             player.setItemInHand(event.getHand(), essence);
         } else if (!player.getInventory().add(essence)) {
-            player.drop(essence, false);
+            player.drop(essence, false, net.minecraft.util.Prediction.SERVER_ONLY);
         }
 
         level.playSound(

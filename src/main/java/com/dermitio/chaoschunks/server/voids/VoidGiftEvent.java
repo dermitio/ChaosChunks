@@ -112,7 +112,7 @@ public final class VoidGiftEvent {
     private static void grantGift(ServerPlayer player) {
         ItemStack gift = pickGift(player.getRandom());
         if (!player.getInventory().add(gift)) {
-            player.drop(gift, false);
+            player.drop(gift, false, net.minecraft.util.Prediction.SERVER_ONLY);
         }
     }
 

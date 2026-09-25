@@ -73,7 +73,7 @@ public class ChaosChunks {
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(FreshnessMobEffect::onLivingDamage);
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(VoidEssenceCapture::onRightClickItem);
         net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(VoidEssenceFishing::onItemFished);
-        net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener(ChaosChunksBrewing::register);
+        ChaosChunksBrewing.register(modBus);
 
         if (FMLEnvironment.getDist() == Dist.CLIENT) {
             initClient(modBus, container);

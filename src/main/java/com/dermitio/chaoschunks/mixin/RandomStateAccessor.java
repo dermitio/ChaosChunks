@@ -13,5 +13,5 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 public interface RandomStateAccessor {
 
     @Accessor("noises")
-    HolderGetter<NormalNoise.NoiseParameters> chaoschunks$getNoises();
+    HolderGetter<NormalNoise> chaoschunks$getNoises();
 }

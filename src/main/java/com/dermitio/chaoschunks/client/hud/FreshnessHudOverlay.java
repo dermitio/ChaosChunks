@@ -45,7 +45,7 @@ public final class FreshnessHudOverlay {
         }
 
         Minecraft minecraft = Minecraft.getInstance();
-        if (minecraft.options.hideGui || minecraft.player == null || minecraft.player.isSpectator()) return;
+        if (minecraft.gui.hud.isHidden() || minecraft.player == null || minecraft.player.isSpectator()) return;
 
         Player player = minecraft.player;
         long gameTime = player.level().getGameTime();

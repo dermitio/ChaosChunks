@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:simple_block",
+  "to_place": {
+    "id": "chaoschunks:mint_bush",
+    "properties": {
+      "stage": "0"
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:brewing",
+  "neoforge:conditions": [
+    {
+      "type": "chaoschunks:time_void_mint_enabled"
+    }
+  ],
+  "input": {
+    "item": "chaoschunks:deepbreath"
+  },
+  "reagent": {
+    "item": "chaoschunks:mint"
+  },
+  "output": {
+    "id": "chaoschunks:deepbreath_long",
+    "count": 1
+  }
+}
